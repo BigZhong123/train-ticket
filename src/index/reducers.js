@@ -11,7 +11,7 @@ import {
 } from './action';
 
 export default {
-    from (state, action) {
+    from (state = '北京', action) {
         const { type, payload } = action;
         switch (type) {
             case ACTION_SET_FROM:
@@ -20,7 +20,7 @@ export default {
         }
         return state
     },
-    to (state, action) {
+    to (state = '上海', action) {
         const { type, payload } = action;
         switch (type) {
             case ACTION_SET_TO:
@@ -29,7 +29,7 @@ export default {
         }
         return state
     },
-    isCitySelectorVisible (state, action) {
+    isCitySelectorVisible (state = false, action) {
         const { type, payload } = action;
         switch (type) {
             case ACTION_SET_IS_CITY_SELECTOR_VISIBLE:
@@ -38,7 +38,7 @@ export default {
         }
         return state
     },
-    currentSelectingLeftCity (state, action) {
+    currentSelectingLeftCity (state = false, action) {
         const { type, payload } = action;
         switch (type) {
             case ACTION_SET_CURRENT_SELECTING_LEFT_CITY:
@@ -47,7 +47,7 @@ export default {
         }
         return state
     },
-    cityData (state, action) {
+    cityData (state = null, action) {
         const { type, payload } = action;
         switch (type) {
             case ACTION_SET_CITY_DATA:
@@ -56,7 +56,7 @@ export default {
         }
         return state
     },
-    isLoadingCityData (state, action) {
+    isLoadingCityData (state = false, action) {
         const { type, payload } = action;
         switch (type) {
             case ACTION_SET_IS_LOADING_CITY_DATA:
@@ -65,7 +65,7 @@ export default {
         }
         return state
     },
-    isDateSelectorVisible (state, action) {
+    isDateSelectorVisible (state = false, action) {
         const { type, payload } = action;
         switch (type) {
             case ACTION_SET_IS_DATE_SELECTOR_VISIBLE:
@@ -74,7 +74,7 @@ export default {
         }
         return state
     },
-    departDate (state, action) {
+    departDate (state = Date.now(), action) {
         const { type, payload } = action;
         switch (type) {
             case ACTION_SET_DEPART_DATE:
@@ -83,7 +83,7 @@ export default {
         }
         return state
     },
-    highSpeed (state, action) {
+    highSpeed (state = false, action) {
         const { type, payload } = action;
         switch (type) {
             case ACTION_SET_HIGH_SPEED:
