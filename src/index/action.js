@@ -95,8 +95,8 @@ export function hideDateSelector() {
 export function exchangeFromTo() {
     return (dispatch, getState) => {
         const { from, to } = getState();
-        setFrom(to);
-        setTo(from);
+        dispatch(setFrom(to));
+        dispatch(setTo(from));
     }
 };
 
