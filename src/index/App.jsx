@@ -19,7 +19,8 @@ import {
     exchangeFromTo,
     hideCitySelector,
     fetchCityData,
-    setSelectedCity
+    setSelectedCity,
+    showDateSelector
 } from './action.js'
 
 function App(props) {
@@ -34,7 +35,8 @@ function App(props) {
         dispatch,
         isCitySelectorVisible,
         cityData,
-        isLoadingCityData
+        isLoadingCityData,
+        departDate
     } = props
 
     const cbs = useMemo(() => {
@@ -52,6 +54,12 @@ function App(props) {
         }, dispatch)
     }, [dispatch])
 
+    const departDateCbs = useMemo(() => {
+        return bindActionCreators({
+            onClick: showDateSelector
+        }, dispatch)
+    }, [dispatch])
+
     return (
         <div>
             <div className="header-wrapper">
@@ -63,7 +71,10 @@ function App(props) {
                     to={to}
                     {...cbs}
                 />
-                <DepartDate />
+                <DepartDate
+                    time={departDate}
+                    {...departDateCbs}
+                />
                 <HighSpeed />
                 <Submit />
             </form>
