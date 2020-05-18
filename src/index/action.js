@@ -71,10 +71,11 @@ export function setSelectedCity(selectedCity) {
     return (dispatch, getState) => {
         const { currentSelectingLeftCity } = getState();
         if (currentSelectingLeftCity) {
-            setFrom(selectedCity);
+            dispatch(setFrom(selectedCity));
         } else {
-            setTo(selectedCity)
+            dispatch(setTo(selectedCity));
         }
+        dispatch(hideCitySelector());
     }
 };
 
@@ -104,5 +105,32 @@ export function setDepartDate(departDate) {
     return {
         type: ACTION_SET_DEPART_DATE,
         payload: departDate
+    }
+}
+
+export function fetchCityData() {
+    return (dispatch, getState) => {
+        const { isLoadingCityData } = getState();
+        if (isLoadingCityData) {
+            return;
+        }
+        const cache = JSON.parse(localStorage.getItem('CITY_DATA_CACHE') || '{}')
+        if(cache.expires > Date.now()) {
+            dispatch(setCityData(cache.data));
+            return;
+        }
+        dispatch(setIsLoadingCityData(true))
+        fetch('/rest/cities').then(res => {
+            return res.json()
+        }).then(cityData => {
+            dispatch(setCityData(cityData));
+            localStorage.setItem('CITY_DATA-CACHE', JSON.stringify({
+                data: cityData,
+                expires: Date.now() + 60 * 1000
+            }))
+            dispatch(setIsLoadingCityData(false));
+        }).catch(() => {
+            dispatch(setIsLoadingCityData(false));
+        })
     }
 }
