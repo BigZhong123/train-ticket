@@ -5,6 +5,7 @@ import React, {
 import { bindActionCreators } from 'redux'
 import './App.css';
 import { connect } from 'react-redux';
+import { h0 } from '../common/fp';
 
 import Header from '../common/Header.jsx';
 import DepartDate from './DepartDate.jsx';
@@ -12,7 +13,8 @@ import HighSpeed from './HighSpeed.jsx';
 import Journey from './Journey.jsx';
 import Submit from './Submit.jsx';
 
-import CitySelector from '../common/citySelector.jsx'
+import CitySelector from '../common/CitySelector.jsx';
+import DateSelector from '../common/DateSelector.jsx';
 
 import {
     showCitySelector,
@@ -20,7 +22,9 @@ import {
     hideCitySelector,
     fetchCityData,
     setSelectedCity,
-    showDateSelector
+    showDateSelector,
+    hideDateSelector,
+    setDepartDate
 } from './action.js'
 
 function App(props) {
@@ -36,7 +40,8 @@ function App(props) {
         isCitySelectorVisible,
         cityData,
         isLoadingCityData,
-        departDate
+        departDate,
+        isDateSelectorVisible
     } = props
 
     const cbs = useMemo(() => {
@@ -59,6 +64,27 @@ function App(props) {
             onClick: showDateSelector
         }, dispatch)
     }, [dispatch])
+
+    const dateSelectorCbs = useMemo(() => {
+        return bindActionCreators({
+            onBack: hideDateSelector
+        }, dispatch)
+    }, [dispatch])
+
+    const dateSelectAction = useCallback(day => {
+        const now = h0();
+
+        if (!day) {
+            return;
+        }
+
+        if (day < now) {
+            return;
+        }
+
+        dispatch(setDepartDate(day))
+        dispatch(hideDateSelector())
+    })
 
     return (
         <div>
@@ -84,6 +110,11 @@ function App(props) {
                 isLoading={isLoadingCityData}
                 {...citySelectorCbs}
                 // onBack={() => dispatch(hideCitySelector())}
+            />
+            <DateSelector
+                show={isDateSelectorVisible}
+                {...dateSelectorCbs}
+                onSelect={dateSelectAction}
             />
         </div>
     )

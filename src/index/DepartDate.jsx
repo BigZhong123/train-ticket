@@ -20,7 +20,7 @@ export default function DepartDate(props) {
 
     const weekString = '星期' 
         + ['日', '一', '二', '三', '四', '五', '六'][departDate.getDay()] 
-        + (isToday ? '(今天)' : '111')
+        + (isToday ? '(今天)' : '')
 
     return (
         <div className="depart-date" onClick={onClick}>

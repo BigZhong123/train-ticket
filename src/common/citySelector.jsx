@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, memo } from 'react';
 import classnames from 'classnames';
-import './citySelector.css';
+import './CitySelector.css';
 import PropTypes from 'prop-types';
 
 const AlphaIndex = memo(function(props) {
