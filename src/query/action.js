@@ -43,6 +43,13 @@ export function setDepartDate(departDate) {
     }
 }
 
+export function setHighSpeed(highSpeed) {
+    return {
+        type: ACTION_SET_HIGH_SPEED,
+        payload: highSpeed
+    }
+}
+
 export function toggleHighSpeed() {
     return (dispatch, getState) => {
         const { highSpeed} = getState();
