@@ -44,7 +44,8 @@ function App(props) {
         arriveTimeStart,
         arriveTimeEnd,
         searchParse,
-        dispatch
+        dispatch,
+        trainList
     } = props;
 
     const onBack = useCallback(() => {
@@ -151,7 +152,7 @@ function App(props) {
                 isPrevDisabled={isPrevDisabled}
                 isNextDisabled={isNextDisabled}
             />
-            <List />
+            <List list={trainList} />
             <Bottom />
         </div>
     )
