@@ -1,5 +1,5 @@
 import { ORDER_DEPART, ORDER_DURATION } from './constant';
-
+import { h0 } from '../common/fp';
 export const ACTION_SET_FROM = 'SET_FROM';
 export const ACTION_SET_TO = 'SET_TO';
 export const ACTION_SET_DEPART_DATE = 'SET_DEPART_DATE';
@@ -198,13 +198,13 @@ export function setSearchParse(searchParse) {
 export function nextDate() {
     return (dispatch, getState) => {
         const { departDate } = getState();
-        dispatch(setDepartDate(departDate + 86400 * 1000))
+        dispatch(setDepartDate(h0(departDate) + 86400 * 1000))
     }
 }
 
 export function preDate() {
     return (dispatch, getState) => {
         const { departDate } = getState();
-        dispatch(setDepartDate(departDate - 86400 * 1000))
+        dispatch(setDepartDate(h0(departDate) - 86400 * 1000))
     }
 }
