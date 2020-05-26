@@ -10,7 +10,7 @@ import thunk from 'redux-thunk';
 export default createStore(
     combineReducers(reducers),
     {
-
+        
     },
     applyMiddleware(thunk)
 );

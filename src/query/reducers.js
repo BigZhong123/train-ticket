@@ -52,11 +52,16 @@ export default {
         }
         return state
     },
+
+    // 联动操作
     highSpeed (state = false, action) {
         const { type, payload } = action;
         switch (type) {
             case ACTION_SET_HIGH_SPEED:
-                return payload
+                return payload;
+            case ACTION_SET_CHECKED_TRAIN_TYPES:
+                const checkedTrainTypes = payload;
+                return Boolean(checkedTrainTypes[1] && checkedTrainTypes[5])
             default:
         }
         return state
@@ -115,11 +120,25 @@ export default {
         }
         return state
     },
+
+    // 联动操作
     checkedTrainTypes (state = {}, action) {
         const { type, payload } = action;
         switch (type) {
             case ACTION_SET_CHECKED_TRAIN_TYPES:
-                return payload
+                return payload;
+            case ACTION_SET_HIGH_SPEED:
+                const newCheckedTrainTypes = {...state}
+                const highSpeed = payload;
+                if (highSpeed) {
+                    newCheckedTrainTypes[1] = true;
+                    newCheckedTrainTypes[5] = true;
+                } else {
+                    delete newCheckedTrainTypes[1];
+                    delete newCheckedTrainTypes[5];
+                }
+
+                return newCheckedTrainTypes
             default:
         }
         return state
