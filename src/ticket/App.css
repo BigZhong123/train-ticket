@@ -10,6 +10,9 @@
     right: 0;
     top: 44px;
 }
+.detail-wrapper {
+    margin-top: 44px;
+}
 
 .mask {
     position: fixed;
