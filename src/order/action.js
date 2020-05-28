@@ -118,3 +118,220 @@ export function fetchInitial(url) {
             });
     };
 }
+
+let passengerId = 0;
+
+export function addAdult() {
+    return (dispatch, getState) => {
+        const { passengers } = getState();
+
+        for(let passenger of passengers) {
+            let keys = Object.keys(passenger)
+            for(let key of keys) {
+                if (!passenger[key]) {
+                    return
+                }
+            }
+        }
+
+        return dispatch(setPassengers([
+            ...passengers,
+            {
+                id: ++passengerId,
+                name: '',
+                ticketType: 'adult',
+                licenceNo: '',
+                seat: 'Z',
+            }
+        ]))
+    }
+}
+
+export function addChild() {
+    return (dispatch, getState) => {
+        const { passengers } = getState();
+
+        let followNumber = null;
+
+        for(let passenger of passengers) {
+            let keys = Object.keys(passenger)
+            for(let key of keys) {
+                if (!passenger[key]) {
+                    return
+                }
+            }
+            if (passenger.ticketType === 'adult') {
+                followNumber = passenger.id;
+            }
+        }
+
+        if (!followNumber) {
+            alert('请至少添加一个随行成人!');
+            return;
+        }
+
+        return dispatch(setPassengers([
+            ...passengers,
+            {
+                id: ++passengerId,
+                name: '',
+                ticketType: 'child',
+                seat: 'Z',
+                gender: 'none',
+                birthday: '',
+                followAdult: followNumber,
+            }
+        ]))
+    }
+}
+
+export function onRemove(id) {
+    return (dispatch, getState) => {
+        const { passengers } = getState();
+
+        const newPassengers = passengers.filter(passenger => {
+            return passenger.id !== id && passenger.followAdult !== id
+        })
+
+        dispatch(setPassengers(newPassengers))
+    }
+}
+
+export function onUpdate(id, data, keysToBeRemoved = []) {
+    return (dispatch, getState) => {
+        const { passengers } = getState();
+
+        for(let i = 0; i < passengers.length; i++) {
+            if (passengers[i].id === id) {
+                const newPassengers = [...passengers];
+                newPassengers[i] = Object.assign({}, passengers[i], data);
+
+                for (let key in keysToBeRemoved) {
+                    delete newPassengers[i][key]
+                }
+
+                dispatch(setPassengers(newPassengers))
+
+                break;
+            }
+        }
+    }
+}
+
+export function showMenu(menu) {
+    return (dispatch) => {
+        dispatch(setMenu(menu));
+        dispatch(setIsMenuVisible(true))
+    }
+};
+
+export function hideMenu() {
+    return setIsMenuVisible(false);
+}
+
+export function showGenderMenu(id) {
+    return (dispatch, getState) => {
+        const { passengers } = getState();
+        const passenger = passengers.find(passenger => passenger.id === id);
+
+        if (!passenger) {
+            return;
+        }
+
+        return dispatch(showMenu({
+            onPress(gender) {
+                dispatch(onUpdate(id, { gender }));
+                dispatch(hideMenu());
+            },
+            options: [
+                {
+                    title: '男',
+                    value: 'male',
+                    active: 'male' === passenger.gender,
+                },
+                {
+                    title: '女',
+                    value: 'female',
+                    active: 'female' === passenger.gender,
+                },
+            ],
+        }))
+    }
+}
+
+export function showFollowAdultMenu(id) {
+    return (dispatch, getState) => {
+        const { passengers } = getState();
+        const passenger = passengers.find(passenger => passenger.id === id);
+
+        if (!passenger) {
+            return;
+        }
+
+        dispatch(showMenu({
+            onPress(followAdult) {
+                dispatch(onUpdate(id, { followAdult }));
+                dispatch(hideMenu());
+            },
+            options: passengers.filter(passenger => {
+                return passenger.id !== id && passenger.ticketType === 'adult'
+            }).map(adult => {
+                return {
+                    title: adult.name,
+                    value: adult.id,
+                    active: adult.id === passenger.followAdult
+                }
+            })
+        }))
+    }
+}
+
+export function showTicketTypeMenu(id) {
+    return (dispatch, getState) => {
+        const { passengers } = getState();
+        const passenger = passengers.find(passenger => passenger.id === id);
+
+        if (!passenger) {
+            return;
+        }
+
+        dispatch(showMenu({
+            onPress(ticketType) {
+                if (ticketType === 'adult') {
+                    dispatch(onUpdate(id, {
+                        ticketType,
+                        licenceNo: ''
+                    }, ['birthday', 'gender', 'followAdult']))
+                } else {
+                    const adult = passengers.find(passenger => {
+                        return passenger.id !== id && passenger.ticketType === 'adult'
+                    })
+                    if(adult) {
+                        dispatch(onUpdate(id, {
+                            ticketType,
+                            gender: 'none',
+                            birthday: '',
+                            followAdult: adult.id
+                        }, ['licenecNo']))
+                    } else {
+                        alert('请至少添加一名成人乘客')
+                    }
+                }
+                dispatch(hideMenu());
+            },
+            options: [
+                {
+                    title: '成人票',
+                    value: 'adult',
+                    active: 'adult' === passenger.ticketType,
+                },
+                {
+                    title: '儿童票',
+                    value: 'child',
+                    active: 'child' === passenger.ticketType,
+                },
+            ],
+            
+        }))
+    }
+}

@@ -64,7 +64,7 @@
         0 0 no-repeat;
     background-size: 60%;
     background-position: center;
-    margin: 10px 0;
+    /* margin: 10px 0; */
 }
 
 .detail .content .train-mid .left {

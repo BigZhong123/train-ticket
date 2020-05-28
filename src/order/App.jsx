@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import './App.css';
 import URI from 'urijs';
 import dayjs from 'dayjs';
@@ -9,6 +9,7 @@ import Choose from './Choose.jsx';
 import Account from './Account.jsx';
 import Header from '../common/Header.jsx';
 import Detail from '../common/Detail.jsx';
+import Menu from './Menu.jsx'
 
 import {
     setTrainNumber,
@@ -17,8 +18,17 @@ import {
     setSeatType,
     setDepartDate,
     setSearchParsed,
-    fetchInitial
+    fetchInitial,
+    addAdult,
+    addChild,
+    onRemove,
+    onUpdate,
+    hideMenu,
+    showGenderMenu,
+    showFollowAdultMenu,
+    showTicketTypeMenu,
 } from './action';
+import { bindActionCreators } from 'redux';
 
 function App(props) {
     const {
@@ -34,7 +44,7 @@ function App(props) {
         price,
         passengers,
         menu,
-        isMenVisible,
+        isMenuVisible,
         searchParsed,
         dispatch,
     } = props;
@@ -69,6 +79,33 @@ function App(props) {
             .toString();
         dispatch(fetchInitial(url));
     }, [searchParsed, departStation, arriveStation, seatType, departDate, dispatch]);
+
+    const passengerCbs = useMemo(() => {
+        return bindActionCreators({
+            addAdult,
+            addChild,
+            onRemove,
+            onUpdate,
+            showGenderMenu,
+            showFollowAdultMenu,
+            showTicketTypeMenu,
+        }, dispatch)
+    }, [dispatch])
+
+    const menuCbs = useMemo(() => {
+        return bindActionCreators(
+            {
+                hideMenu,
+            },
+            dispatch
+        );
+    }, [dispatch]);
+
+    const chooseCbs = useMemo(() => {
+        return bindActionCreators({
+            onUpdate
+        }, dispatch)
+    }, [dispatch])
     
     if (!searchParsed) {
         return null;
@@ -93,6 +130,27 @@ function App(props) {
                     <span style={{display: 'block'}} className="train-icon"></span>
                 </Detail>
             </div>
+            <Ticket price={price} type={seatType} />
+            <Passengers passengers={passengers} {...passengerCbs} />
+            {
+                passengers.length > 0 && (
+                    <Choose
+                        passengers={passengers}
+                        {
+                            ...chooseCbs
+                        }
+                    />
+                )
+            }
+            <Account
+                price={price}
+                length={passengers.length}
+            />
+            <Menu
+                show={isMenuVisible}
+                {...menu}
+                {...menuCbs}
+            />
         </div>
     )
 };
