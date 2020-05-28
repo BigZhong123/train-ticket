@@ -24,6 +24,7 @@ const getClientEnvironment = require('./env');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const postcssNormalize = require('postcss-normalize');
 
@@ -207,7 +208,11 @@ module.exports = function(webpackEnv) {
       // webpack uses `publicPath` to determine where the app is being served from.
       // It requires a trailing slash, or the file assets will get an incorrect path.
       // We inferred the "public path" (such as / or /my-project) from homepage.
+
+      // publicPath: process.env.NODE_ENV !== 'production' || process.env.USE_LOCAL_FILES === 'true' 
+      //   ? '/' : 'https://www.cdn.com' ,
       publicPath: paths.publicUrlOrPath,
+
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: isEnvProduction
         ? info =>
@@ -538,6 +543,10 @@ module.exports = function(webpackEnv) {
       ],
     },
     plugins: [
+      process.env.GENERATE_BUNDLE_ANALYZER === 'true' && new BundleAnalyzerPlugin({
+        openAnalyzer: false,
+        analyzerMode: 'static'
+      }),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(
         Object.assign(
